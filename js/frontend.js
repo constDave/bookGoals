@@ -68,19 +68,24 @@ function createElements(data) {
     const cardBody = document.createElement("div");
     const wordsToComplete = document.createElement("div");
     const dateDue = document.createElement("div");
+    const row = document.createElement('div')
+    row.classList.add('row')
     dateDue.classList.add("col-md-6");
     dateDue.innerHTML = `Your deadline: ${book.deadline}`;
     wordsToComplete.classList.add("col-md-6");
     wordsToComplete.innerHTML = `Total Words Goal: ${book.wordgoals}`;
+    row.appendChild(wordsToComplete)
     card.classList.add("card");
     cardBody.classList.add("card-body");
     let cardTitle = document.createElement("h4");
     cardTitle.classList.add("text-center");
+    cardTitle.classList.add("mb-4");
     cardTitle.innerHTML = `${book.booktitle}`;
     cardBody.appendChild(cardTitle);
-    cardBody.appendChild(wordsToComplete);
+    //cardBody.appendChild(wordsToComplete);
+    cardBody.appendChild(row)
     if (book.deadline !== null) {
-      cardBody.appendChild(dateDue);
+      row.appendChild(dateDue);
     }
     console.log(wordsToComplete);
 
