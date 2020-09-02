@@ -1,35 +1,45 @@
-body {
+body, html {
   font-family: "Montserrat", sans-serif;
   height: 100%;
   width: 100%;
 }
 
-#books {
-  flex-direction: column-reverse;
+input, label {
+  margin:10px;
 }
 
-#book-subissions {
+#books {
+  flex-direction: column-reverse;
+  
+}
+
+#book-submissions {
  background: linear-gradient(-8deg,#66267b,#0e3754 45%,#376789 75%,#049474);
   border-radius: 15px;
   padding: 1rem;
+  visibility: hidden;
+  
 }
 
 .btn-info {
-  background-color: #376789;
+  background-color: #0e3754;
 }
 btn-info:hover{
-  background-color: #049474;
+  background-color: #376789;
 }
 .page-header {
-  /*background: url('img/typewriter.jpeg') no-repeat fixed center;*/
-  /*background: rgb(36, 104, 201);
-  background: linear-gradient(
-    90deg,
-    rgba(36, 104, 201, 1) 0%,
-    rgba(15, 10, 82, 1) 100%,
-    rgba(8, 105, 114, 1) 100%
-  );*/
   background: linear-gradient(-8deg,#66267b,#0e3754 45%,#376789 75%,#049474);
   height: 100vh;
   width: 100%;
+}
+
+#myBooksContent {
+  margin-bottom: 5rem;
+}
+
+#form-div {
+    background-color: #049474;
+    padding: 3rem;
+    border-radius: 10px;
+    color: white;
 }

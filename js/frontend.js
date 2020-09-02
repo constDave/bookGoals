@@ -3,6 +3,7 @@ const formBookTitle = document.querySelector("#bookTitle");
 const formWordGoals = document.querySelector("#wordGoals");
 const formDeadline = document.querySelector("#deadline");
 const booksDiv = document.querySelector("#books");
+const bookSubmissions = document.querySelector("#book-submissions");
 
 const serverUrl = "http://localhost:3000/addbook";
 
@@ -43,7 +44,9 @@ form.addEventListener("submit", e => {
   formBookTitle.value = "";
   formWordGoals.value = "";
   document.querySelector("#books").innerHTML = "";
-  getBooks(serverUrl);
+  setTimeout(() => {
+    getBooks(serverUrl);
+  }, 0300);
 });
 
 async function getBooks(url) {
@@ -56,7 +59,10 @@ async function getBooks(url) {
     });
     const data = await response.json();
     const bookEntries = Array.from(data);
-    createElements(bookEntries);
+    if (bookEntries.length > 0) {
+      createElements(bookEntries);
+      bookSubmissions.style.visibility = "visible";
+    } 
   } catch (error) {
     console.log(error);
   }
@@ -68,29 +74,57 @@ function createElements(data) {
     const cardBody = document.createElement("div");
     const wordsToComplete = document.createElement("div");
     const dateDue = document.createElement("div");
-    const row = document.createElement('div')
-    row.classList.add('row')
-    dateDue.classList.add("col-md-6");
-    dateDue.innerHTML = `Your deadline: ${book.deadline}`;
-    wordsToComplete.classList.add("col-md-6");
-    wordsToComplete.innerHTML = `Total Words Goal: ${book.wordgoals}`;
-    row.appendChild(wordsToComplete)
+    const row = document.createElement("div");
+    const deleteIcon = document.createElement("a");
+    let cardTitle = document.createElement("h2");
+    const wordsCompleted = document.createElement('div')
+    let currentWords = 0;
+    
+    wordsCompleted.innerHTML = `<h5>Words completed: ${currentWords}</h5> <a href="#">Update words completed</a>`
+    wordsCompleted.classList.add('col-md-4')
+    row.appendChild(wordsCompleted)
+    
+
+    deleteIcon.innerHTML = "Delete entry";
+    deleteIcon.classList.add("delete-icon");
+    deleteIcon.classList.add("p-2");
+    deleteIcon.style.color = "red";
+    deleteIcon.style.visibility = 'hidden'
+
+    dateDue.classList.add("col-md-4");
+    dateDue.classList.add("text-center");
+    dateDue.innerHTML = `<h5>Deadline: ${book.deadline} </h5>`;
+
+    wordsToComplete.classList.add("col-md-4");
+    wordsToComplete.classList.add("text-center");
+    wordsToComplete.innerHTML = `<h5>Words Goal: ${book.wordgoals} </h5>`;
+
+    row.classList.add("row");
+    row.appendChild(wordsToComplete);
+
     card.classList.add("card");
     cardBody.classList.add("card-body");
-    let cardTitle = document.createElement("h4");
+
     cardTitle.classList.add("text-center");
-    cardTitle.classList.add("mb-4");
+    cardTitle.classList.add("mb-3");
     cardTitle.innerHTML = `${book.booktitle}`;
     cardBody.appendChild(cardTitle);
-    //cardBody.appendChild(wordsToComplete);
-    cardBody.appendChild(row)
+    cardBody.appendChild(row);
     if (book.deadline !== null) {
       row.appendChild(dateDue);
     }
-    console.log(wordsToComplete);
+    card.appendChild(deleteIcon);
 
     card.appendChild(cardBody);
     booksDiv.appendChild(card);
+
+    card.addEventListener('mouseover', () => {
+      deleteIcon.style.visibility = 'visible'
+    })
+
+    card.addEventListener('mouseout', () => {
+      deleteIcon.style.visibility = 'hidden'
+    })
   });
 }
 
