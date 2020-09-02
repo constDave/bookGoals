@@ -62,7 +62,7 @@ async function getBooks(url) {
     if (bookEntries.length > 0) {
       createElements(bookEntries);
       bookSubmissions.style.visibility = "visible";
-    } 
+    }
   } catch (error) {
     console.log(error);
   }
@@ -77,23 +77,33 @@ function createElements(data) {
     const row = document.createElement("div");
     const deleteIcon = document.createElement("a");
     let cardTitle = document.createElement("h2");
-    const wordsCompleted = document.createElement('div')
+    const wordsCompleted = document.createElement("div");
     let currentWords = 0;
-    
-    wordsCompleted.innerHTML = `<h5>Words completed: ${currentWords}</h5> <a href="#">Update words completed</a>`
-    wordsCompleted.classList.add('col-md-4')
-    row.appendChild(wordsCompleted)
-    
+
+    wordsCompleted.innerHTML = `<h5>Words completed: ${currentWords}</h5> <a href="#">Update words completed</a>`;
+    wordsCompleted.classList.add("col-md-4");
+    row.appendChild(wordsCompleted);
 
     deleteIcon.innerHTML = "Delete entry";
     deleteIcon.classList.add("delete-icon");
     deleteIcon.classList.add("p-2");
     deleteIcon.style.color = "red";
-    deleteIcon.style.visibility = 'hidden'
+    deleteIcon.style.visibility = "hidden";
 
     dateDue.classList.add("col-md-4");
     dateDue.classList.add("text-center");
+    dateDue.classList.add("deadlineDate");
     dateDue.innerHTML = `<h5>Deadline: ${book.deadline} </h5>`;
+
+    setTimeout(() => {
+      const deadlineDate = Array.from(
+        document.querySelectorAll(".deadlineDate")
+      );
+
+      deadlineDate.forEach(date => {
+        date.innerText = date.innerText.slice(0, 20);
+      });
+    }, 500);
 
     wordsToComplete.classList.add("col-md-4");
     wordsToComplete.classList.add("text-center");
@@ -118,13 +128,13 @@ function createElements(data) {
     card.appendChild(cardBody);
     booksDiv.appendChild(card);
 
-    card.addEventListener('mouseover', () => {
-      deleteIcon.style.visibility = 'visible'
-    })
+    card.addEventListener("mouseover", () => {
+      deleteIcon.style.visibility = "visible";
+    });
 
-    card.addEventListener('mouseout', () => {
-      deleteIcon.style.visibility = 'hidden'
-    })
+    card.addEventListener("mouseout", () => {
+      deleteIcon.style.visibility = "hidden";
+    });
   });
 }
 
