@@ -68,6 +68,14 @@ async function getBooks(url) {
   }
 }
 
+function daysDifference(date) {
+  const oneDay = 24 * 60 * 60 * 1000; // numerical value for one day to be used to count difference for deadlines
+  const dueDate = new Date(date);
+  const currentDate = new Date(Date.now());
+  const daysLeft = Math.round(Math.abs((dueDate - currentDate) / oneDay));
+  return daysLeft;
+}
+
 function createElements(data) {
   data.forEach(book => {
     const card = document.createElement("div");
@@ -76,8 +84,12 @@ function createElements(data) {
     const dateDue = document.createElement("div");
     const row = document.createElement("div");
     const deleteIcon = document.createElement("a");
-    let cardTitle = document.createElement("h2");
+    let cardTitle = document.createElement("h1");
     const wordsCompleted = document.createElement("div");
+    const daysUntilDue = document.createElement("div");
+    daysUntilDue.innerHTML = `<h5>Days left: ${daysDifference(book.deadline)} </h5>`;
+
+
     let currentWords = 0;
 
     wordsCompleted.innerHTML = `<h5>Words completed: ${currentWords}</h5> <a href="#">Update words completed</a>`;
@@ -93,7 +105,7 @@ function createElements(data) {
     dateDue.classList.add("col-md-4");
     dateDue.classList.add("text-center");
     dateDue.classList.add("deadlineDate");
-    dateDue.innerHTML = `<h5>Deadline: ${book.deadline} </h5>`;
+    dateDue.innerHTML = `<h5>Deadline: ${book.deadline}</h5>`;
 
     setTimeout(() => {
       const deadlineDate = Array.from(
@@ -122,6 +134,7 @@ function createElements(data) {
     cardBody.appendChild(row);
     if (book.deadline !== null) {
       row.appendChild(dateDue);
+      cardBody.appendChild(daysUntilDue);
     }
     card.appendChild(deleteIcon);
 
