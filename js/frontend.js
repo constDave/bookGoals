@@ -5,26 +5,33 @@ const formDeadline = document.querySelector("#deadline");
 const booksDiv = document.querySelector("#books");
 const bookSubmissions = document.querySelector("#book-submissions");
 
-const serverUrl = "http://localhost:3000/addbook";
+//icon.nextElementSibling.firstElementChild.innerText
 
+const serverUrl = "http://localhost:3000/addbook";
+const deleteUrl = "http://localhost:3000/deletebook";
+
+// FORM LISTENER
 form.addEventListener("submit", e => {
   e.preventDefault();
-
+  // Get the form data from form fields
   const formData = new FormData(form);
   const bookTitle = formData.get("bookTitle");
   const wordGoals = formData.get("wordGoals");
   const deadline = formData.get("deadline");
 
+  // If the fields are empty alert they are required
   if (formBookTitle.value === "" || formWordGoals.value === "") {
     alert("Fields are required.");
   }
 
+  // Create an object of the fields data to send in the API request
   const bookEntry = {
     bookTitle,
     wordGoals,
     deadline: new Date(deadline)
   };
 
+  // Post function to call to send data
   async function postData(url, data = {}) {
     const response = await fetch(url, {
       method: "POST",
@@ -36,19 +43,23 @@ form.addEventListener("submit", e => {
     return response.json();
   }
 
+  // Call the Post data to the server URL sending the object created from the form fields
   postData(serverUrl, bookEntry)
     .then(data => console.log(data))
     .catch(error => console.error(error));
 
-  console.log(bookEntry);
+  //Clear the fields after submission
   formBookTitle.value = "";
   formWordGoals.value = "";
   document.querySelector("#books").innerHTML = "";
+  // Get the new books that were just submitted
   setTimeout(() => {
     getBooks(serverUrl);
   }, 0300);
+  applyDeleteIcons();
 });
 
+// function to getbooks from the API
 async function getBooks(url) {
   try {
     const response = await fetch(url, {
@@ -62,12 +73,15 @@ async function getBooks(url) {
     if (bookEntries.length > 0) {
       createElements(bookEntries);
       bookSubmissions.style.visibility = "visible";
+    } else {
+      bookSubmissions.style.visibility = "hidden";
     }
   } catch (error) {
     console.log(error);
   }
 }
 
+// Function needed to find out how many days left from a deadline
 function daysDifference(date) {
   const oneDay = 24 * 60 * 60 * 1000; // numerical value for one day to be used to count difference for deadlines
   const dueDate = new Date(date);
@@ -76,6 +90,7 @@ function daysDifference(date) {
   return daysLeft;
 }
 
+// Function to create all the elements of the Card after submission
 function createElements(data) {
   data.forEach(book => {
     const card = document.createElement("div");
@@ -87,8 +102,9 @@ function createElements(data) {
     let cardTitle = document.createElement("h1");
     const wordsCompleted = document.createElement("div");
     const daysUntilDue = document.createElement("div");
-    daysUntilDue.innerHTML = `<h5>Days left: ${daysDifference(book.deadline)} </h5>`;
-
+    daysUntilDue.innerHTML = `<h5>Days left: ${daysDifference(
+      book.deadline
+    )} </h5>`;
 
     let currentWords = 0;
 
@@ -106,7 +122,7 @@ function createElements(data) {
     dateDue.classList.add("text-center");
     dateDue.classList.add("deadlineDate");
     dateDue.innerHTML = `<h5>Deadline: ${book.deadline}</h5>`;
-
+    // Gather the deadlines and format them to be nicer to read
     setTimeout(() => {
       const deadlineDate = Array.from(
         document.querySelectorAll(".deadlineDate")
@@ -152,3 +168,47 @@ function createElements(data) {
 }
 
 getBooks(serverUrl);
+
+async function deletePost(url, data = {}) {
+  try {
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+    return response.json();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function applyDeleteIcons() {
+  setTimeout(() => {
+    const deleteIcons = document.querySelectorAll(".delete-icon");
+    console.log(deleteIcons);
+    deleteIcons.forEach(icon => {
+      icon.addEventListener("click", function(event) {
+        confirm("Are you sure you want to delete this entry?");
+        console.log(
+          event.target.nextElementSibling.firstElementChild.innerText
+        );
+        const cardName = event.target.nextElementSibling.firstElementChild.innerText.toLowerCase();
+        const deleteName = {
+          name: cardName
+        };
+        deletePost(deleteUrl, deleteName);
+        this.parentElement.remove();
+
+        setTimeout(() => {
+          if (!document.querySelector(".card")) {
+            document.querySelector("#book-submissions").remove();
+          }
+        }, 0300);
+      });
+    });
+  }, 1000);
+}
+
+applyDeleteIcons();
