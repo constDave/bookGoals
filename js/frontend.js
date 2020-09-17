@@ -45,7 +45,7 @@ form.addEventListener("submit", e => {
 
   // Call the Post data to the server URL sending the object created from the form fields
   postData(serverUrl, bookEntry)
-    .then(data => console.log(data))
+    .then(getBooks(serverUrl))
     .catch(error => console.error(error));
 
   //Clear the fields after submission
@@ -53,23 +53,18 @@ form.addEventListener("submit", e => {
   formWordGoals.value = "";
   document.querySelector("#books").innerHTML = "";
   // Get the new books that were just submitted
-  setTimeout(() => {
-    getBooks(serverUrl);
-  }, 0300);
+  // setTimeout(() => {
+  //   getBooks(serverUrl);
+  // }, 0300);
   applyDeleteIcons();
 });
 
 // function to getbooks from the API
 async function getBooks(url) {
   try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
+    const response = await fetch(url);
     const data = await response.json();
-    const bookEntries = Array.from(data);
+    const bookEntries = data;
     if (bookEntries.length > 0) {
       createElements(bookEntries);
       bookSubmissions.style.visibility = "visible";
@@ -77,7 +72,7 @@ async function getBooks(url) {
       bookSubmissions.style.visibility = "hidden";
     }
   } catch (error) {
-    console.log(error);
+    bookSubmissions.innerText = error;
   }
 }
 
